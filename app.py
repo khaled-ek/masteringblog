@@ -27,8 +27,7 @@ def home():
     """
 
     # Read the JSON file.
-    with open(POSTS_FILE, "r", encoding="utf-8") as file:
-        blog_posts = json.load(file)
+    blog_posts = read_posts_from_file(POSTS_FILE)
 
     return render_template('index.html', posts=blog_posts)
 
@@ -55,8 +54,7 @@ def add():
         title = request.form.get("title")
         content = request.form.get("content")
 
-        with open(POSTS_FILE, "r", encoding="utf-8") as file:
-            blog_posts = json.load(file)
+        blog_posts = read_posts_from_file(POSTS_FILE)
 
         # Generate the ID for the new post.
         new_id = max((post["id"] for post in blog_posts), default=0) + 1
@@ -71,8 +69,7 @@ def add():
         blog_posts.append(new_post)
 
         # save the updated posts list back to the JSON file
-        with open(POSTS_FILE, "w", encoding="utf-8") as file:
-            json.dump(blog_posts, file, indent=4)
+        save_posts_to_file(blog_posts, POSTS_FILE)
 
         return redirect(url_for('home')), 200
 
@@ -96,18 +93,65 @@ def delete_post(post_id):
     Returns:
         Response: a redirect to the home page after successfully deleting a post.
     """
-    with open(POSTS_FILE, "r", encoding="utf-8") as file:
-        blog_posts = json.load(file)
+    blog_posts = read_posts_from_file(POSTS_FILE)
 
     # Removing dictionary where the ID is equal to the post_id
     blog_posts = list(filter(lambda d: str(d.get('id')) != str(post_id), blog_posts))
 
 
     # save the updated posts list back to the JSON file
-    with open(POSTS_FILE, "w", encoding="utf-8") as file:
-        json.dump(blog_posts, file, indent=4)
+    save_posts_to_file(blog_posts, POSTS_FILE)
 
     return redirect(url_for('home')), 200
+
+
+def fetch_post_by_id(post_id, blog_posts):
+    """
+    Find a blog post by its ID.
+
+    Searches through the list of blog posts for a post whose ID
+    matches the specified post ID.
+
+    Args:
+        post_id (int): The ID of the post to find.
+        blog_posts (list): A list of dictionaries containing blog posts.
+
+    Returns:
+        tuple: The index and dictionary of the matching post.
+        None: If no post with the specified ID is found.
+    """
+
+    for index, post in enumerate(blog_posts):
+        if str(post.get('id')) == str(post_id):
+            return index, post
+
+    return None
+
+def save_posts_to_file(blog_posts, file_name):
+    """"
+    Storing all posts in the specified JSON file
+
+    Args:
+          blog_posts (list): A list of the blog posts to save
+          file_name (str): The name of the JSON file
+
+    """
+    with open(file_name, "w", encoding="utf-8") as file:
+        json.dump(blog_posts, file, indent=4)
+
+def read_posts_from_file(file_name):
+    """"
+    Retrieving all posts from the JSON file
+
+    Args:
+        file_name (str): The name of the JSON file
+
+    Returns:
+         list: A list of the blog posts
+
+    """
+    with open(file_name, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 @app.route('/update/<int:post_id>', methods=['GET', 'POST'])
@@ -131,20 +175,17 @@ def update_post(post_id):
         or a 404 response if the post cannot be found.
     """
 
-    with open(POSTS_FILE, "r", encoding="utf-8") as file:
-        blog_posts = json.load(file)
+    blog_posts = read_posts_from_file(POSTS_FILE)
 
-    post = None
-    list_index = 0
+    result = fetch_post_by_id(post_id, blog_posts)
 
-    for i in range(len(blog_posts)):
-        if str(blog_posts[i].get('id')) == str(post_id):
-            post = blog_posts[i]
-            list_index = i
-
-    if post is None:
+    if result is None:
         # Post not found
         return "Post not found", 404
+
+    list_index, post = result
+
+
 
     # update the post's data according to the changes made in the update form
     if request.method == 'POST':
@@ -154,8 +195,7 @@ def update_post(post_id):
         blog_posts[list_index]["content"] = request.form.get("content")
 
         # save the updated posts list back to the JSON file
-        with open(POSTS_FILE, "w", encoding="utf-8") as file:
-            json.dump(blog_posts, file, indent=4)
+        save_posts_to_file(blog_posts, POSTS_FILE)
 
         return redirect(url_for('home')), 200
 
@@ -163,6 +203,40 @@ def update_post(post_id):
     # Else, it's a GET request
     # So display the update.html page
     return render_template('update.html', post=post)
+
+@app.route('/like/<int:post_id>', methods=['POST'])
+def like_post(post_id):
+    """
+    Likes a blog post specified by the post_id from the posts blog storage.
+
+    It handles the POST request by reading all posts from the JSON file
+    and storing them in a list, it increments the number of likes for the specified
+    post (from the retrieved list ) by matching its id with the post_id. Then it
+    stores the list back in the JSON file.
+
+    Parameters:
+         post_id (str): The id of the post to delete
+
+    Returns:
+        Response: a redirect to the home page after successfully handling the like.
+    """
+    blog_posts = read_posts_from_file(POSTS_FILE)
+
+    result = fetch_post_by_id(post_id, blog_posts)
+
+    if result is None:
+        # Post not found
+        return "Post not found", 404
+
+    list_index, post = result
+
+    blog_posts[list_index]["likes"] += 1
+
+    # save the updated posts list back to the JSON file
+    save_posts_to_file(blog_posts, POSTS_FILE)
+
+    return redirect(url_for('home')), 200
+
 
 
 if __name__ == '__main__':

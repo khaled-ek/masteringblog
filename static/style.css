@@ -25,3 +25,7 @@ h1 {
 .post p {
     margin: 10px 0;
 }
+
+.like-count {
+    margin-left: 5px;
+}

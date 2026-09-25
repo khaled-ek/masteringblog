@@ -3,36 +3,35 @@
         "id": 1,
         "author": "John Doe",
         "title": "Weather Tomorrow",
-        "content": "The weather forecast tomorrow shows a heavy rain  "
+        "content": "There is warning from thunder storm tomorrow",
+        "likes": 10
     },
     {
         "id": 2,
         "author": "Jane Doe",
         "title": "Fitness studio",
-        "content": "The MIC fitness studio has an offer for new members"
+        "content": "The MIC fitness studio has an offer for new members",
+        "likes": 1
     },
     {
         "id": 3,
         "author": "John Doe",
-        "title": "Flask",
-        "content": "Flask enables building Backend Apps"
+        "title": "Whatever",
+        "content": "Good morning everyone",
+        "likes": 0
     },
     {
         "id": 4,
         "author": "John Doe",
         "title": "Public Transport",
-        "content": "DVB is will have a strike next Monday, this will cause serious disruption to the public transport service"
+        "content": "DVB is will have a strike next Monday, this will cause serious disruption to the public transport service",
+        "likes": 1
     },
     {
         "id": 5,
         "author": "John Doe",
         "title": "CS session",
-        "content": "The CS session was cancelled today"
-    },
-    {
-        "id": 6,
-        "author": "John Doe",
-        "title": "Landscape beauty ",
-        "content": "Any one has some Nature holiday photos to share?"
+        "content": "The CS session was cancelled today",
+        "likes": 0
     }
 ]

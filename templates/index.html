@@ -33,7 +33,22 @@
 
                     <button type="submit">Delete</button>
                 </form>
+                <form method="POST"
+                    action="{{ url_for('like_post', post_id=post.id) }}"
+                    style="display: inline;">
+
+                    <button type="submit">
+                        <img src="{{ url_for('static', filename='images/like.png') }}"
+                            alt=""
+                            width="18"
+                            height="14">
+                        <span class="like-count">{{ post.likes }}</span>
+                    </button>
+                </form>
             </div>
+
+
+
         </div>
     {% endfor %}
 
