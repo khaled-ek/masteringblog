@@ -33,5 +33,12 @@
         "title": "CS session",
         "content": "The CS session was cancelled today",
         "likes": 0
+    },
+    {
+        "id": 6,
+        "author": "Jane Doe",
+        "title": "Your view",
+        "content": "What is your view about the effect of AI on the employment?",
+        "likes": 0
     }
 ]
